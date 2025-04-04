@@ -8,5 +8,6 @@ import accountsign from './Dvg_Reddy[1].png';
 import vamsisign from './vamsisign.png';
 import sumithsign from './sumitsign.png';
 import devsign from './devsign.png';
-
-export { fullbody, border , title, ribbon, stamp, footer, accountsign, vamsisign, sumithsign,devsign }; 
+import landscapebg from './fullbody-landscape.png';
+import portraitbg from './fullbody-portrait.png';
+export { fullbody, border , title, ribbon, stamp, footer, accountsign, vamsisign, sumithsign,devsign, landscapebg, portraitbg }; 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { CertificateData } from '../types/certificate';
-import { fullbody, border, title, ribbon, stamp, footer, accountsign, devsign, vamsisign, sumithsign } from '../assets/assets';
+import { fullbody, border, title, ribbon, stamp, footer, accountsign, devsign, vamsisign, sumithsign, landscapebg } from '../assets/assets';
 
 interface CertificateTemplateProps {
   data: CertificateData;
@@ -28,7 +28,7 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
       style={{
         fontFamily: 'Arial, sans-serif',
         padding: '2px',
-        background: `url(${fullbody})`,
+        background: `url(${isLandscape ? landscapebg : fullbody})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }}
