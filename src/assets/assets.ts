@@ -9,4 +9,6 @@ import vamsisign from './vamsisign.png';
 import sumithsign from './sumitsign.png';
 import devsign from './devsign.png';
 import landscapebg from './fullbody-landscape.png';
-export { fullbody, border , title, ribbon, stamp, footer, accountsign, vamsisign, sumithsign,devsign, landscapebg, portraitbg }; 
+
+
+export { fullbody, border , title, ribbon, stamp, footer, accountsign, vamsisign, sumithsign,devsign, landscapebg }; 
