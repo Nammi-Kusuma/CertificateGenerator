@@ -213,10 +213,10 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
 
   const handleIndividualSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newCertificate = {
+    const newCertificate: CertificateData = {
       ...individualCertificate,
       type,
-      orientation: type === 'offline' ? 'portrait' : 'landscape',
+      orientation: type === 'offline' ? 'portrait' as const : 'landscape' as const,
       trainerSignature: individualCertificate.trainerSignature || 'dev',
       uin: type === 'offline' ? 'UA005ZTS0TC' : 'UA005ZQS0TC'
     };
@@ -297,7 +297,7 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
               <div className="flex gap-2">
                 <button
                   type="button"
-                  onClick={() => navigate('/certificate', { state: { data: certificates[0] } })}
+                  onClick={() => navigate(type === 'offline' ? '/preview/portrait' : '/preview/landscape')}
                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                   disabled={processing}
                 >

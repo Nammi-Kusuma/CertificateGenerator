@@ -59,21 +59,33 @@ function App() {
     }
   };
 
-  const data: CertificateData = {
-    name: "John Doe",
-    certificateNo: "",
-    aadharNo: "1234567890",
+  const portraitData: CertificateData = {
+    name: "RAHUL KUMAR",
+    certificateNo: "IDA/2024/001",
+    aadharNo: "1234 5678 9012",
     sex: "Male",
-    dob: "1990-01-01",
-    address: "123 Main St, Anytown, USA",
-    groundClasses: "10",
-    simulationClasses: "20",
-    flyingTraining: "30",
-    dateOfIssue: "2024-01-01",
+    dob: "15 Jan 1995",
+    address: "123, Green Park Extension, New Delhi - 110016",
+    groundClasses: "24 Hours",
+    groundClassesFrom: "24 MAR 2025",
+    groundClassesTo: "25 MAR 2025",
+    simulationClasses: "12 Hours",
+    simulationClassesFrom: "26 MAR 2025",
+    simulationClassesTo: "26 MAR 2025",
+    flyingTraining: "16 Hours",
+    flyingTrainingFrom: "27 MAR 2025",
+    flyingTrainingTo: "28 MAR 2025",
+    dateOfIssue: "28 March 2025",
     orientation: "portrait" as const,
-    type: 'offline',
-    trainerSignature: 'dev',
-    uin: "1234567890"
+    type: "offline",
+    trainerSignature: "dev",
+    uin: "UA-23-ABC-123"
+  }
+
+  const landscapeData: CertificateData = {
+    ...portraitData,
+    certificateNo: "IDA/2024/002",
+    orientation: "landscape" as const,
   }
 
   return (
@@ -93,7 +105,8 @@ function App() {
         <main className="py-10">
           <Routes>
             <Route path="/" element={<CertificateForm onSubmit={handleGenerateCertificates} processing={processing} />} />
-            <Route path="/certificate" element={<CertificatePreview data={data} />} />
+            <Route path="/preview/portrait" element={<CertificatePreview data={portraitData} />} />
+            <Route path="/preview/landscape" element={<CertificatePreview data={landscapeData} />} />
           </Routes>
         </main>
       </div>

@@ -37,7 +37,7 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
       <div
         className="absolute inset-0"
         style={{
-          background: `url(${border})`,
+          background: `url(${isLandscape ? "white" : border})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           zIndex: 100
@@ -67,7 +67,7 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
       </div>
 
       {/* Name Banner */}
-      <div className={`absolute ${isLandscape ? 'top-[200px]' : 'top-[5px]'} left-0 right-0 flex justify-center z-30`}>
+      <div className={`absolute ${isLandscape ? 'top-[-180px]' : 'top-[5px]'} left-0 right-0 flex justify-center z-30`}>
         <div className={`relative w-full ${isLandscape ? 'px-4' : 'px-8'}`}>
           <img
             src={ribbon}
@@ -84,7 +84,7 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
               : 'top-[-429px]'
           }`}>
             <span className={`text-3xl font-bold text-[white] uppercase tracking-[0.07em] ${
-              isLandscape ? 'mt-16' : ''
+              isLandscape ? 'mt-12' : ''
             }`}>
               {data.name}
             </span>
@@ -149,7 +149,7 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
       </div>
 
       {/* Training Hours */}
-      <div className={`absolute ${isLandscape ? 'top-[500px]' : 'top-[700px]'} left-[80px] right-[40px]`}>
+      <div className={`absolute ${isLandscape ? 'top-[520px]' : 'top-[700px]'} left-[80px] right-[40px]`}>
         <div className="flex flex-col gap-y-2">
           <div className="flex">
             <p className="font-bold text-sm w-[180px]">GROUND CLASSES</p>
