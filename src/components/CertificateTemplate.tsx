@@ -60,39 +60,13 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
       </div>
 
       {/* Certificate Title */}
-      <div className={`absolute ${isLandscape ? 'top-[100px]' : 'top-[220px]'} left-0 right-0 text-center z-20`}>
+      <div className={`absolute ${isLandscape ? 'top-[140px]' : 'top-[220px]'} left-0 right-0 text-center z-20`}>
         <h1 className="text-4xl font-bold text-[#8B7355] tracking-wide">CERTIFICATE OF COMPLETION</h1>
         <p className="text-xl mt-6 text-[#8B7355]">This is to Certify that</p>
       </div>
 
-      {/* Name Banner */}
-      <div className={`absolute ${isLandscape ? 'top-[220px]' : 'top-[320px]'} left-0 right-0 flex justify-center z-10`}>
-        <div className={`relative w-full ${isLandscape ? 'px-4' : 'px-8'}`}>
-          <img
-            src={ribbon}
-            alt="Name Banner"
-            className={`${
-              isLandscape 
-                ? 'h-[800px] min-w-[800px] transform scale-[0.35]' 
-                : 'h-[1200px] min-w-[500px] transform scale-[0.55]'
-            } object-contain mx-auto`}
-          />
-          <div className={`absolute inset-0 flex items-center justify-center z-20 ${
-            isLandscape 
-              ? 'top-[-220px]' 
-              : 'top-[-429px]'
-          }`}>
-            <span className={`text-3xl font-bold text-[white] uppercase tracking-[0.07em] ${
-              isLandscape ? 'mt-8' : ''
-            }`}>
-              {data.name}
-            </span>
-          </div>
-        </div>
-      </div>
-
       {/* Course Description */}
-      <div className={`absolute ${isLandscape ? 'top-[180px]' : 'top-[440px]'} left-0 right-0 text-center`}>
+      <div className={`absolute ${isLandscape ? 'top-[280px]' : 'top-[440px]'} left-0 right-0 text-center z-10`}>
         <p className="text-lg leading-relaxed">
           Has successfully completed the DGCA approved Remote Pilot Training Course
           <br />
@@ -100,8 +74,34 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
         </p>
       </div>
 
+      {/* Name Banner */}
+      <div className={`absolute ${isLandscape ? 'top-[200px]' : 'top-[300px]'} left-0 right-0 flex justify-center z-30`}>
+        <div className={`relative w-full ${isLandscape ? 'px-4' : 'px-8'}`}>
+          <img
+            src={ribbon}
+            alt="Name Banner"
+            className={`${
+              isLandscape 
+                ? 'h-[1200px] min-w-[800px] transform scale-75' 
+                : 'h-[1200px] min-w-[500px]'
+            } object-contain mx-auto`}
+          />
+          <div className={`absolute inset-0 flex items-center justify-center z-20 ${
+            isLandscape 
+              ? 'top-[-380px]' 
+              : 'top-[-429px]'
+          }`}>
+            <span className={`text-3xl font-bold text-[white] uppercase tracking-[0.07em] ${
+              isLandscape ? 'mt-16' : ''
+            }`}>
+              {data.name}
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Personal Details */}
-      <div className={`absolute ${isLandscape ? 'top-[320px]' : 'top-[520px]'} left-[80px] right-[40px]`}>
+      <div className={`absolute ${isLandscape ? 'top-[340px]' : 'top-[480px]'} left-[80px] right-[40px]`}>
         <div className="grid grid-cols-3 text-left mb-2">
           <div>
             <span className="font-semibold text-sm">Aadhar No: </span>
@@ -123,7 +123,7 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
       </div>
 
       {/* Training Details */}
-      <div className={`absolute ${isLandscape ? 'top-[380px]' : 'top-[560px]'} left-[80px] right-[40px]`}>
+      <div className={`absolute ${isLandscape ? 'top-[420px]' : 'top-[560px]'} left-[80px] right-[40px]`}>
         <p className="font-bold text-sm">TRAINED ON UAS HAVING UIN : {data.uin}</p>
         <div className="w-full mt-2">
           <div className="grid grid-cols-4" style={{ paddingLeft: 0 }}>
@@ -148,7 +148,7 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
       </div>
 
       {/* Training Hours */}
-      <div className={`absolute ${isLandscape ? 'top-[460px]' : 'top-[680px]'} left-[80px] right-[40px]`}>
+      <div className={`absolute ${isLandscape ? 'top-[500px]' : 'top-[680px]'} left-[80px] right-[40px]`}>
         <div className="flex flex-col gap-y-2">
           <div className="flex">
             <p className="font-bold text-sm w-[180px]">GROUND CLASSES</p>
@@ -166,7 +166,7 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
       </div>
 
       {/* Signatures */}
-      <div className={`absolute ${isLandscape ? 'bottom-[80px]' : 'bottom-[180px]'} left-[80px] right-[80px] flex justify-between items-end`}>
+      <div className={`absolute ${isLandscape ? 'bottom-[100px]' : 'bottom-[180px]'} left-[80px] right-[80px] flex justify-between items-end`}>
         <div className="text-center w-[200px]">
           <div className="border-b border-gray-400 pb-1 mb-1">
             <img

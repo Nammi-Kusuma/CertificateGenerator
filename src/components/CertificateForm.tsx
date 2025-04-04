@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Upload, Download, Plus, Trash2 } from 'lucide-react';
+import { Upload, Download, Plus, Trash2, Eye } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import * as XLSX from 'xlsx';
 import { CertificateData } from '../types/certificate';
+import { useNavigate } from 'react-router-dom';
 
 interface CertificateFormProps {
   onSubmit: (data: CertificateData[]) => void;
@@ -30,6 +31,7 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
     trainerSignature: 'dev',
     uin: 'UA005ZTS0TC'
   });
+  const navigate = useNavigate();
 
   const downloadTemplate = () => {
     const template = [
@@ -249,28 +251,48 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
             </div>
           </div>
 
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-medium">Add Certificates</h3>
-            <div className="flex space-x-2">
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex gap-2">
               <button
                 type="button"
                 onClick={downloadTemplate}
-                className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 disabled={processing}
               >
-                <Download className="w-4 h-4 mr-2" />
+                <Download className="h-5 w-5 mr-2" />
                 Download Template
               </button>
               <button
                 type="button"
                 onClick={() => setShowIndividualForm(true)}
-                className="flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                 disabled={processing}
               >
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="h-5 w-5 mr-2" />
                 Add Individual
               </button>
             </div>
+
+            {certificates.length > 0 && (
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => navigate('/certificate', { state: { data: certificates[0] } })}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                  disabled={processing}
+                >
+                  <Eye className="h-5 w-5 mr-2" />
+                  Preview Certificate
+                </button>
+                <button
+                  type="submit"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  disabled={processing}
+                >
+                  {processing ? 'Generating...' : 'Generate Certificates'}
+                </button>
+              </div>
+            )}
           </div>
 
           <div 
@@ -439,19 +461,6 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
               </div>
             </div>
           )}
-
-          <div className="mt-6">
-            <button
-              type="submit"
-              className={`w-full flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                processing ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-              disabled={processing || certificates.length === 0}
-            >
-              <Download className="mr-2 h-4 w-4" />
-              {processing ? 'Generating Certificates...' : 'Generate Certificates'}
-            </button>
-          </div>
         </div>
       </form>
     </div>
