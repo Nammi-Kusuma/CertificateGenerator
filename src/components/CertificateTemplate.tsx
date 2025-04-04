@@ -153,15 +153,15 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
         <div className="flex flex-col gap-y-2">
           <div className="flex">
             <p className="font-bold text-sm w-[180px]">GROUND CLASSES</p>
-            <p className="text-sm">: {data.groundClasses}</p>
+            <p className="text-sm">: {data.groundClassesFrom} - {data.groundClassesTo}</p>
           </div>
           <div className="flex">
             <p className="font-bold text-sm w-[180px]">SIMULATION TRAINING</p>
-            <p className="text-sm">: {data.simulationClasses}</p>
+            <p className="text-sm">: {data.simulationClassesFrom} - {data.simulationClassesTo}</p>
           </div>
           <div className="flex">
             <p className="font-bold text-sm w-[180px]">FLYING TRAINING</p>
-            <p className="text-sm">: {data.flyingTraining}</p>
+            <p className="text-sm">: {data.flyingTrainingFrom} - {data.flyingTrainingTo}</p>
           </div>
         </div>
       </div>

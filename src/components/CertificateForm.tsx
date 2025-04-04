@@ -12,7 +12,6 @@ interface CertificateFormProps {
 
 export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, processing }) => {
   const [certificates, setCertificates] = useState<CertificateData[]>([]);
-  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
   const [type, setType] = useState<'offline' | 'online'>('offline');
   const [showIndividualForm, setShowIndividualForm] = useState(false);
   const [individualCertificate, setIndividualCertificate] = useState<CertificateData>({
@@ -23,8 +22,14 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
     dob: '',
     address: '',
     groundClasses: '',
+    groundClassesFrom: '',
+    groundClassesTo: '',
     simulationClasses: '',
+    simulationClassesFrom: '',
+    simulationClassesTo: '',
     flyingTraining: '',
+    flyingTrainingFrom: '',
+    flyingTrainingTo: '',
     dateOfIssue: '',
     orientation: 'portrait',
     type: 'offline',
@@ -32,6 +37,17 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
     uin: 'UA005ZTS0TC'
   });
   const navigate = useNavigate();
+
+  // Update orientation when type changes
+  const handleTypeChange = (newType: 'offline' | 'online') => {
+    setType(newType);
+    // Update all existing certificates
+    setCertificates(certificates.map(cert => ({
+      ...cert,
+      type: newType,
+      orientation: newType === 'offline' ? 'portrait' : 'landscape'
+    })));
+  };
 
   const downloadTemplate = () => {
     const template = [
@@ -42,9 +58,12 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
         sex: 'Male',
         dob: '1990-01-01',
         address: 'Sample Address',
-        groundClasses: '20 Hours',
-        simulationClasses: '10 Hours',
-        flyingTraining: '15 Hours',
+        groundClassesFrom: '2024-01-01',
+        groundClassesTo: '2024-01-15',
+        simulationClassesFrom: '2024-01-16',
+        simulationClassesTo: '2024-01-25',
+        flyingTrainingFrom: '2024-01-26',
+        flyingTrainingTo: '2024-02-10',
         dateOfIssue: '2024-03-15',
         trainerSignature: 'dev'
       }
@@ -58,9 +77,9 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
       ws['!dataValidation'] = [];
     }
 
-    // Define the validation rule for trainer signature column (K2)
+    // Define the validation rule for trainer signature column
     const validationRule = {
-      sqref: 'K2:K1000', // Apply to column K from row 2 to 1000
+      sqref: 'N2:N1000', // Updated column for trainer signature
       type: 'list',
       values: ['dev', 'vamsi', 'sumith'],
       showDropDown: true,
@@ -74,8 +93,7 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
     ws['!dataValidation'].push(validationRule);
     
     // Add column headers with notes
-    const headerRow = ws['A1'];
-    const trainerSignatureCell = ws['K1'];
+    const trainerSignatureCell = ws['N1'];
     if (trainerSignatureCell) {
       trainerSignatureCell.c = [{ 
         a: "Author",
@@ -91,9 +109,12 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
       { wch: 10 }, // sex
       { wch: 12 }, // dob
       { wch: 30 }, // address
-      { wch: 15 }, // groundClasses
-      { wch: 15 }, // simulationClasses
-      { wch: 15 }, // flyingTraining
+      { wch: 12 }, // groundClassesFrom
+      { wch: 12 }, // groundClassesTo
+      { wch: 12 }, // simulationClassesFrom
+      { wch: 12 }, // simulationClassesTo
+      { wch: 12 }, // flyingTrainingFrom
+      { wch: 12 }, // flyingTrainingTo
       { wch: 12 }, // dateOfIssue
       { wch: 20 }  // trainerSignature
     ];
@@ -152,10 +173,16 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
           dob: row.dob || '',
           address: row.address || '',
           groundClasses: row.groundClasses || '',
+          groundClassesFrom: row.groundClassesFrom || '',
+          groundClassesTo: row.groundClassesTo || '',
           simulationClasses: row.simulationClasses || '',
+          simulationClassesFrom: row.simulationClassesFrom || '',
+          simulationClassesTo: row.simulationClassesTo || '',
           flyingTraining: row.flyingTraining || '',
+          flyingTrainingFrom: row.flyingTrainingFrom || '',
+          flyingTrainingTo: row.flyingTrainingTo || '',
           dateOfIssue: row.dateOfIssue || '',
-          orientation,
+          orientation: type === 'offline' ? 'portrait' : 'landscape',
           type,
           trainerSignature: trainerSign,
           uin: type === 'offline' ? 'UA005ZTS0TC' : 'UA005ZQS0TC'
@@ -188,8 +215,8 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
     e.preventDefault();
     const newCertificate = {
       ...individualCertificate,
-      orientation,
       type,
+      orientation: type === 'offline' ? 'portrait' : 'landscape',
       trainerSignature: individualCertificate.trainerSignature || 'dev',
       uin: type === 'offline' ? 'UA005ZTS0TC' : 'UA005ZQS0TC'
     };
@@ -203,13 +230,19 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
       dob: '',
       address: '',
       groundClasses: '',
+      groundClassesFrom: '',
+      groundClassesTo: '',
       simulationClasses: '',
+      simulationClassesFrom: '',
+      simulationClassesTo: '',
       flyingTraining: '',
+      flyingTrainingFrom: '',
+      flyingTrainingTo: '',
       dateOfIssue: '',
-      orientation: 'portrait',
-      type: 'offline',
+      orientation: type === 'offline' ? 'portrait' : 'landscape',
+      type: type,
       trainerSignature: 'dev',
-      uin: 'UA005ZTS0TC'
+      uin: type === 'offline' ? 'UA005ZTS0TC' : 'UA005ZQS0TC'
     });
   };
 
@@ -223,30 +256,17 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-bold mb-4">Certificate Generator</h2>
           
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Orientation</label>
-              <select
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                value={orientation}
-                onChange={(e) => setOrientation(e.target.value as 'portrait' | 'landscape')}
-                disabled={processing}
-              >
-                <option value="portrait">Portrait</option>
-                <option value="landscape">Landscape</option>
-              </select>
-            </div>
-
+          <div className="mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-700">Type</label>
               <select
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 value={type}
-                onChange={(e) => setType(e.target.value as 'offline' | 'online')}
+                onChange={(e) => handleTypeChange(e.target.value as 'offline' | 'online')}
                 disabled={processing}
               >
-                <option value="offline">Offline</option>
-                <option value="online">Online</option>
+                <option value="offline">Offline (Portrait)</option>
+                <option value="online">Online (Landscape)</option>
               </select>
             </div>
           </div>
@@ -372,30 +392,72 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Ground Classes</label>
-                  <input
-                    type="text"
-                    value={individualCertificate.groundClasses}
-                    onChange={(e) => setIndividualCertificate({...individualCertificate, groundClasses: e.target.value})}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-xs text-gray-500">From</label>
+                      <input
+                        type="date"
+                        value={individualCertificate.groundClassesFrom}
+                        onChange={(e) => setIndividualCertificate({...individualCertificate, groundClassesFrom: e.target.value})}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500">To</label>
+                      <input
+                        type="date"
+                        value={individualCertificate.groundClassesTo}
+                        onChange={(e) => setIndividualCertificate({...individualCertificate, groundClassesTo: e.target.value})}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Simulation Classes</label>
-                  <input
-                    type="text"
-                    value={individualCertificate.simulationClasses}
-                    onChange={(e) => setIndividualCertificate({...individualCertificate, simulationClasses: e.target.value})}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-xs text-gray-500">From</label>
+                      <input
+                        type="date"
+                        value={individualCertificate.simulationClassesFrom}
+                        onChange={(e) => setIndividualCertificate({...individualCertificate, simulationClassesFrom: e.target.value})}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500">To</label>
+                      <input
+                        type="date"
+                        value={individualCertificate.simulationClassesTo}
+                        onChange={(e) => setIndividualCertificate({...individualCertificate, simulationClassesTo: e.target.value})}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Flying Training</label>
-                  <input
-                    type="text"
-                    value={individualCertificate.flyingTraining}
-                    onChange={(e) => setIndividualCertificate({...individualCertificate, flyingTraining: e.target.value})}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-xs text-gray-500">From</label>
+                      <input
+                        type="date"
+                        value={individualCertificate.flyingTrainingFrom}
+                        onChange={(e) => setIndividualCertificate({...individualCertificate, flyingTrainingFrom: e.target.value})}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500">To</label>
+                      <input
+                        type="date"
+                        value={individualCertificate.flyingTrainingTo}
+                        onChange={(e) => setIndividualCertificate({...individualCertificate, flyingTrainingTo: e.target.value})}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Date of Issue</label>
