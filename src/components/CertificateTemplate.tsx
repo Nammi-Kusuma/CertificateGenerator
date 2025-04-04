@@ -1,6 +1,6 @@
 import React from 'react';
 import { CertificateData } from '../types/certificate';
-import { fullbody, border, title, ribbon } from '../assets/assets';
+import { fullbody, border, title, ribbon, stamp, footer } from '../assets/assets';
 
 interface CertificateTemplateProps {
   data: CertificateData;
@@ -13,7 +13,7 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
       id="certificate-template"
       style={{
         fontFamily: 'Arial, sans-serif',
-        padding: '15px',
+        padding: '2px',
         background: `url(${fullbody})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center'
@@ -29,7 +29,7 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
         }}
       />
 
-      <div className="absolute top-2 right-10">
+      <div className="absolute top-0 right-10">
         <p className="text-[white]">Certificate No: {data.certificateNo}</p>
       </div>
 
@@ -42,7 +42,7 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
 
         {/* Header with curved design */}
         <div className="absolute top-0 left-0 right-0 h-[200px] overflow-hidden">
-          <div className="absolute top-9 left-2 flex items-center">
+          <div className="absolute top-9 left-4 flex items-center">
             <div className="">
               <img
                 src={title}
@@ -84,72 +84,72 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
         </div>
 
         {/* Personal Details */}
-        <div className="absolute top-[480px] left-[80px] right-[80px]">
-          <div className="grid grid-cols-3 gap-8 text-gray-700 mb-6">
+        <div className="absolute top-[480px] left-[80px] right-[40px] border-b border-gray-400">
+          <div className="grid grid-cols-3 text-left mb-2">
             <div>
-              <p className="font-semibold mb-1">Aadhar No:</p>
-              <p>{data.aadharNo}</p>
+              <span className="font-semibold text-sm">Aadhar No: </span>
+              <span className="text-sm">{data.aadharNo}</span>
             </div>
             <div>
-              <p className="font-semibold mb-1">Sex:</p>
-              <p>{data.sex}</p>
+              <span className="font-semibold text-sm">Sex: </span>
+              <span className="text-sm">{data.sex}</span>
             </div>
             <div>
-              <p className="font-semibold mb-1">DOB:</p>
-              <p>{data.dob}</p>
+              <span className="font-semibold text-sm">DOB: </span>
+              <span className="text-sm">{data.dob}</span>
             </div>
           </div>
-          <div className="mb-8">
-            <p className="font-semibold mb-1">Address:</p>
-            <p className="text-gray-700">{data.address}</p>
+          <div className="mb-6">
+            <span className="font-semibold text-sm">Address: </span>
+            <span className="text-sm">{data.address}</span>
           </div>
         </div>
 
         {/* Training Details */}
-        <div className="absolute top-[600px] left-[80px] right-[80px]">
-          <div className="border-t border-b border-gray-300 py-6">
-            <p className="font-bold mb-4">TRAINED ON UAS HAVING UIN: {data.uin}</p>
-            <div className="grid grid-cols-2 gap-x-12 gap-y-6">
-              <div>
-                <p className="font-bold text-gray-600 mb-1">CATEGORY OF UAS</p>
-                <p className="text-gray-800">ROTORCRAFT</p>
+        <div className="absolute top-[570px] left-[80px] right-[40px] pb-6 border-b border-gray-400">
+          <p className="font-bold text-sm">TRAINED ON UAS HAVING UIN : {data.uin}</p>
+          <div className="w-full mt-2">
+            <div className="grid grid-cols-4" style={{ paddingLeft: 0 }}>
+              <div className="pr-4">
+                <p className="font-bold text-sm mb-2">CATEGORY OF UAS</p>
+                <p className="text-sm">ROTORCRAFT</p>
+              </div>
+              <div className="">
+                <p className="font-bold text-sm mb-2 whitespace-nowrap">SUB-CATEGORY OF UAS</p>
+                <p className="text-sm">RPAS</p>
+              </div>
+              <div className="pr-4 pl-4">
+                <p className="font-bold text-sm mb-2">CLASS OF UAS</p>
+                <p className="text-sm">SMALL</p>
               </div>
               <div>
-                <p className="font-bold text-gray-600 mb-1">SUB-CATEGORY OF UAS</p>
-                <p className="text-gray-800">RPAS</p>
-              </div>
-              <div>
-                <p className="font-bold text-gray-600 mb-1">CLASS OF UAS</p>
-                <p className="text-gray-800">SMALL</p>
-              </div>
-              <div>
-                <p className="font-bold text-gray-600 mb-1">VLOS/BVLOS</p>
-                <p className="text-gray-800">VLOS ONLY</p>
+                <p className="font-bold text-sm mb-2">VLOS/BVLOS</p>
+                <p className="text-sm">VLOS ONLY</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Training Hours */}
-        <div className="absolute top-[800px] left-[80px] right-[80px]">
-          <div className="grid grid-cols-2 gap-x-12 gap-y-6">
-            <div>
-              <p className="font-bold text-gray-600 mb-2">GROUND CLASSES:</p>
-              <p className="text-gray-800">{data.groundClasses}</p>
+        <div className="absolute top-[680px] left-[80px] right-[40px]">
+          <div className="flex flex-col gap-y-2">
+            <div className="flex">
+              <p className="font-bold text-sm w-[180px]">GROUND CLASSES</p>
+              <p className="text-sm">: 24 MAR 2025 - 25 MAR 2025</p>
             </div>
-            <div>
-              <p className="font-bold text-gray-600 mb-2">SIMULATION CLASSES:</p>
-              <p className="text-gray-800">{data.simulationClasses}</p>
+            <div className="flex">
+              <p className="font-bold text-sm w-[180px]">SIMULATION TRAINING</p>
+              <p className="text-sm">: 26 MAR 2025</p>
             </div>
-            <div className="col-span-2">
-              <p className="font-bold text-gray-600 mb-2">FLYING TRAINING:</p>
-              <p className="text-gray-800">{data.flyingTraining}</p>
+            <div className="flex">
+              <p className="font-bold text-sm w-[180px]">FLYING TRAINING</p>
+              <p className="text-sm">: 27 MAR 2025 - 28 MAR 2025</p>
             </div>
           </div>
         </div>
 
         {/* Signatures */}
-        <div className="absolute bottom-[200px] left-[80px] right-[80px] flex justify-between items-end">
+        <div className="absolute bottom-[180px] left-[80px] right-[80px] flex justify-between items-end">
           <div className="text-center w-[200px]">
             <div className="border-b border-gray-400 pb-2 mb-2">
               <img
@@ -162,9 +162,9 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
           </div>
           <div className="text-center">
             <img
-              src="https://raw.githubusercontent.com/yourusername/certificate-generator/main/public/seal.png"
+              src={stamp}
               alt="Seal"
-              className="h-28 mx-auto mb-2"
+              className="h-40 w-40 mx-auto mt-16"
             />
           </div>
           <div className="text-center w-[200px]">
@@ -179,42 +179,17 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
           </div>
         </div>
 
-        {/* Footer */}
         <div className="absolute bottom-0 left-0 right-0">
-          <p className="text-center text-gray-600 mb-8">
-            <span className="font-semibold">Date of Issue:</span> {data.dateOfIssue}
-          </p>
-          <div
-            className="h-[80px] relative overflow-hidden"
-            style={{
-              background: 'linear-gradient(to right bottom, transparent 50%, #e0e0e0 50%)'
-            }}
-          >
-            <div className="absolute bottom-0 left-0 right-0 h-[60px] bg-[#003366] flex items-center justify-center">
-              <p className="text-white mr-8 font-medium">In Collaboration With</p>
-              <div className="flex items-center space-x-8">
-                <img
-                  src="https://raw.githubusercontent.com/yourusername/certificate-generator/main/public/nsdc-logo.png"
-                  alt="NSDC"
-                  className="h-12"
-                />
-                <img
-                  src="https://raw.githubusercontent.com/yourusername/certificate-generator/main/public/dgca-logo.png"
-                  alt="DGCA"
-                  className="h-12"
-                />
-                <img
-                  src="https://raw.githubusercontent.com/yourusername/certificate-generator/main/public/assam-logo.png"
-                  alt="Government of Assam"
-                  className="h-12"
-                />
-                <img
-                  src="https://raw.githubusercontent.com/yourusername/certificate-generator/main/public/asrlm-logo.png"
-                  alt="ASRLM"
-                  className="h-12"
-                />
-              </div>
-            </div>
+          <div className="relative h-[160px]">
+            <img
+              src={footer}
+              alt="Footer"
+              className="w-full h-full"
+              style={{ objectFit: 'fill' }}
+            />
+            <p className="absolute top-0 left-0 right-0 text-center text-gray-600">
+              <span className="font-semibold">Date of Issue : </span>28 March 2025
+            </p>
           </div>
         </div>
       </div>
