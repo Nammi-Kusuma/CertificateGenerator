@@ -65,7 +65,8 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
         flyingTrainingFrom: '2024-01-26',
         flyingTrainingTo: '2024-02-10',
         dateOfIssue: '2024-03-15',
-        trainerSignature: 'dev'
+        trainerSignature: 'dev',
+        photo: 'https://example.com/path/to/photo.jpg' // Example photo URL
       }
     ];
 
@@ -79,7 +80,7 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
 
     // Define the validation rule for trainer signature column
     const validationRule = {
-      sqref: 'N2:N1000', // Updated column for trainer signature
+      sqref: 'N2:N1000',
       type: 'list',
       values: ['dev', 'vamsi', 'sumith'],
       showDropDown: true,
@@ -93,11 +94,11 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
     ws['!dataValidation'].push(validationRule);
     
     // Add column headers with notes
-    const trainerSignatureCell = ws['N1'];
-    if (trainerSignatureCell) {
-      trainerSignatureCell.c = [{ 
-        a: "Author",
-        t: "Select trainer signature from dropdown (dev/vamsi/sumith)"
+    const photoCell = ws['O1'];
+    if (photoCell) {
+      photoCell.c = [{ 
+        a: "Photo URL",
+        t: "Enter the URL or file path of the student's photo"
       }];
     }
     
@@ -116,7 +117,8 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
       { wch: 12 }, // flyingTrainingFrom
       { wch: 12 }, // flyingTrainingTo
       { wch: 12 }, // dateOfIssue
-      { wch: 20 }  // trainerSignature
+      { wch: 20 }, // trainerSignature
+      { wch: 40 }  // photo URL
     ];
     ws['!cols'] = colWidths;
 
@@ -136,34 +138,34 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
     XLSX.writeFile(wb, 'certificate_template.xlsx');
   };
 
+  const handleImageLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const link = e.target.value;
+    setIndividualCertificate({
+      ...individualCertificate,
+      photo: link
+    });
+  };
+
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     const reader = new FileReader();
 
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       const data = event.target?.result;
       const workbook = XLSX.read(data, { type: 'binary' });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-      console.log('Raw Excel Data:', jsonData); // Debug log
-
+      // Process each row
       const formattedData = jsonData.map((row: any) => {
         // Extract and clean trainer signature
         const rawSignature = String(row.trainerSignature || '').toLowerCase().trim();
-        console.log('Raw signature value:', rawSignature); // Debug log
-        
-        // Remove any extra text from template
         const cleanSignature = rawSignature.split('(')[0].trim();
-        console.log('Cleaned signature value:', cleanSignature); // Debug log
-
-        // Validate trainer signature
         let trainerSign: 'dev' | 'vamsi' | 'sumith' = 'dev';
         if (cleanSignature === 'vamsi' || cleanSignature === 'sumith') {
           trainerSign = cleanSignature;
         }
-        console.log('Final trainer signature:', trainerSign); // Debug log
 
         const formattedCertificate: CertificateData = {
           name: row.name || '',
@@ -185,10 +187,10 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
           orientation: type === 'offline' ? 'portrait' : 'landscape',
           type,
           trainerSignature: trainerSign,
-          uin: type === 'offline' ? 'UA005ZTS0TC' : 'UA005ZQS0TC'
+          uin: type === 'offline' ? 'UA005ZTS0TC' : 'UA005ZQS0TC',
+          photo: row.photo || ''
         };
 
-        console.log('Formatted certificate data:', formattedCertificate); // Debug log
         return formattedCertificate;
       });
 
@@ -332,6 +334,31 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
             <div className="mt-6 p-4 border rounded-lg bg-gray-50">
               <h4 className="text-lg font-medium mb-4">Individual Certificate Details</h4>
               <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700">Photo URL (Google Photos)</label>
+                  <div className="mt-1 space-y-2">
+                    <input
+                      type="url"
+                      placeholder="Enter Google Photos link"
+                      value={individualCertificate.photo || ''}
+                      onChange={handleImageLinkChange}
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    />
+                    {individualCertificate.photo && (
+                      <div className="w-32 h-40 border-2 border-gray-300">
+                        <img
+                          src={individualCertificate.photo}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = '';
+                            e.currentTarget.alt = 'Invalid image URL';
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Name</label>
                   <input

@@ -19,4 +19,5 @@ export interface CertificateData {
   type: 'offline' | 'online';
   trainerSignature: 'dev' | 'vamsi' | 'sumith';
   uin: string;
+  photo?: string; // Base64 encoded image
 }
