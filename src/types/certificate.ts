@@ -11,6 +11,6 @@ export interface CertificateData {
   dateOfIssue: string;
   orientation: 'portrait' | 'landscape';
   type: 'offline' | 'online';
-  signatureMode: 1 | 2 | 3;
+  trainerSignature: 'dev' | 'vamsi' | 'sumith';
   uin: string;
 }

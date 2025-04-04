@@ -13,7 +13,6 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
   const [certificates, setCertificates] = useState<CertificateData[]>([]);
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
   const [type, setType] = useState<'offline' | 'online'>('offline');
-  const [signatureMode, setSignatureMode] = useState<1 | 2 | 3>(1);
   const [showIndividualForm, setShowIndividualForm] = useState(false);
   const [individualCertificate, setIndividualCertificate] = useState<CertificateData>({
     name: '',
@@ -28,7 +27,7 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
     dateOfIssue: '',
     orientation: 'portrait',
     type: 'offline',
-    signatureMode: 1,
+    trainerSignature: 'dev',
     uin: 'UA005ZTS0TC'
   });
 
@@ -44,13 +43,43 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
         groundClasses: '20 Hours',
         simulationClasses: '10 Hours',
         flyingTraining: '15 Hours',
-        dateOfIssue: '2024-03-15'
+        dateOfIssue: '2024-03-15',
+        trainerSignature: 'dev'
       }
     ];
 
-    const ws = XLSX.utils.json_to_sheet(template);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Template');
+    const ws = XLSX.utils.json_to_sheet(template);
+    
+    // Add dropdown validation for trainer signature
+    if (!ws['!dataValidation']) {
+      ws['!dataValidation'] = [];
+    }
+
+    // Define the validation rule for trainer signature column (K2)
+    const validationRule = {
+      sqref: 'K2:K1000', // Apply to column K from row 2 to 1000
+      type: 'list',
+      values: ['dev', 'vamsi', 'sumith'],
+      showDropDown: true,
+      error: 'Please select a valid trainer signature',
+      errorTitle: 'Invalid Trainer Signature',
+      promptTitle: 'Select Trainer',
+      prompt: 'Please select the trainer signature from the dropdown'
+    };
+
+    // Add the validation rule
+    ws['!dataValidation'].push(validationRule);
+    
+    // Add column headers with notes
+    const headerRow = ws['A1'];
+    const trainerSignatureCell = ws['K1'];
+    if (trainerSignatureCell) {
+      trainerSignatureCell.c = [{ 
+        a: "Author",
+        t: "Select trainer signature from dropdown (dev/vamsi/sumith)"
+      }];
+    }
     
     // Add column widths
     const colWidths = [
@@ -63,10 +92,24 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
       { wch: 15 }, // groundClasses
       { wch: 15 }, // simulationClasses
       { wch: 15 }, // flyingTraining
-      { wch: 12 }  // dateOfIssue
+      { wch: 12 }, // dateOfIssue
+      { wch: 20 }  // trainerSignature
     ];
     ws['!cols'] = colWidths;
 
+    // Add the worksheet to the workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Template');
+
+    // Create a new worksheet for the dropdown values
+    const validationWs = XLSX.utils.aoa_to_sheet([
+      ['Trainer Signatures'],
+      ['dev'],
+      ['vamsi'],
+      ['sumith']
+    ]);
+    XLSX.utils.book_append_sheet(wb, validationWs, 'Validation Data');
+
+    // Save the workbook
     XLSX.writeFile(wb, 'certificate_template.xlsx');
   };
 
@@ -81,22 +124,44 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
       const worksheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-      const formattedData = jsonData.map((row: any) => ({
-        name: row.name || '',
-        certificateNo: row.certificateNo || '',
-        aadharNo: row.aadharNo || '',
-        sex: row.sex || '',
-        dob: row.dob || '',
-        address: row.address || '',
-        groundClasses: row.groundClasses || '',
-        simulationClasses: row.simulationClasses || '',
-        flyingTraining: row.flyingTraining || '',
-        dateOfIssue: row.dateOfIssue || '',
-        orientation,
-        type,
-        signatureMode,
-        uin: type === 'offline' ? 'UA005ZTS0TC' : 'UA005ZQS0TC'
-      }));
+      console.log('Raw Excel Data:', jsonData); // Debug log
+
+      const formattedData = jsonData.map((row: any) => {
+        // Extract and clean trainer signature
+        const rawSignature = String(row.trainerSignature || '').toLowerCase().trim();
+        console.log('Raw signature value:', rawSignature); // Debug log
+        
+        // Remove any extra text from template
+        const cleanSignature = rawSignature.split('(')[0].trim();
+        console.log('Cleaned signature value:', cleanSignature); // Debug log
+
+        // Validate trainer signature
+        let trainerSign: 'dev' | 'vamsi' | 'sumith' = 'dev';
+        if (cleanSignature === 'vamsi' || cleanSignature === 'sumith') {
+          trainerSign = cleanSignature;
+        }
+        console.log('Final trainer signature:', trainerSign); // Debug log
+
+        const formattedCertificate: CertificateData = {
+          name: row.name || '',
+          certificateNo: row.certificateNo || '',
+          aadharNo: row.aadharNo || '',
+          sex: row.sex || '',
+          dob: row.dob || '',
+          address: row.address || '',
+          groundClasses: row.groundClasses || '',
+          simulationClasses: row.simulationClasses || '',
+          flyingTraining: row.flyingTraining || '',
+          dateOfIssue: row.dateOfIssue || '',
+          orientation,
+          type,
+          trainerSignature: trainerSign,
+          uin: type === 'offline' ? 'UA005ZTS0TC' : 'UA005ZQS0TC'
+        };
+
+        console.log('Formatted certificate data:', formattedCertificate); // Debug log
+        return formattedCertificate;
+      });
 
       setCertificates(formattedData);
     };
@@ -123,7 +188,7 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
       ...individualCertificate,
       orientation,
       type,
-      signatureMode,
+      trainerSignature: individualCertificate.trainerSignature || 'dev',
       uin: type === 'offline' ? 'UA005ZTS0TC' : 'UA005ZQS0TC'
     };
     setCertificates([...certificates, newCertificate]);
@@ -141,7 +206,7 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
       dateOfIssue: '',
       orientation: 'portrait',
       type: 'offline',
-      signatureMode: 1,
+      trainerSignature: 'dev',
       uin: 'UA005ZTS0TC'
     });
   };
@@ -156,7 +221,7 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-bold mb-4">Certificate Generator</h2>
           
-          <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-2 gap-4 mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-700">Orientation</label>
               <select
@@ -180,20 +245,6 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
               >
                 <option value="offline">Offline</option>
                 <option value="online">Online</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Signature Mode</label>
-              <select
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                value={signatureMode}
-                onChange={(e) => setSignatureMode(Number(e.target.value) as 1 | 2 | 3)}
-                disabled={processing}
-              >
-                <option value={1}>Mode 1</option>
-                <option value={2}>Mode 2</option>
-                <option value={3}>Mode 3</option>
               </select>
             </div>
           </div>

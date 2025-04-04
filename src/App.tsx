@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CertificateForm } from './components/CertificateForm';
 import { CertificateTemplate } from './components/CertificateTemplate';
+import { CertificatePreview } from './components/CertificatePreview';
 import { CertificateData } from './types/certificate';
 import JSZip from 'jszip';
 import html2canvas from 'html2canvas';
@@ -22,28 +23,20 @@ function App() {
         container.style.left = '-9999px';
         document.body.appendChild(container);
 
-        // Render the certificate template
+        // Render certificate in selected orientation
         const root = createRoot(container);
         root.render(<CertificateTemplate data={certificate} />);
-
-        // Wait for images to load
         await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Convert to canvas and then to JPG
         const element = container.firstChild as HTMLElement;
         const canvas = await html2canvas(element, {
           scale: 2,
           useCORS: true,
           logging: false
         });
-
-        // Convert canvas to blob
         const blob = await new Promise<Blob>(resolve => {
           canvas.toBlob(blob => resolve(blob!), 'image/jpeg', 0.95);
         });
-
-        // Add to zip
-        zip.file(`${certificate.name}_certificate.jpg`, blob);
+        zip.file(`${certificate.name}_${certificate.orientation}_certificate.jpg`, blob);
 
         // Cleanup
         root.unmount();
@@ -79,7 +72,7 @@ function App() {
     dateOfIssue: "2024-01-01",
     orientation: "portrait" as const,
     type: 'offline',
-    signatureMode: 1,
+    trainerSignature: 'dev',
     uin: "1234567890"
   }
 
@@ -100,8 +93,7 @@ function App() {
         <main className="py-10">
           <Routes>
             <Route path="/" element={<CertificateForm onSubmit={handleGenerateCertificates} processing={processing} />} />
-            <Route path="/certificate" element={<CertificateTemplate data={data}/>} />
-            {/* <Route path="/certificate1" element={<CertificateTemplate1 data={data}/>} /> */}
+            <Route path="/certificate" element={<CertificatePreview data={data} />} />
           </Routes>
         </main>
       </div>
