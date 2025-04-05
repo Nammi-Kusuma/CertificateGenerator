@@ -40,17 +40,49 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
           background: `url(${isLandscape ? "white" : border})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          zIndex: 100
+          zIndex: 1
         }}
       />
 
-      {/* Certificate Number */}
-      <div className="absolute top-0 right-10">
+      {/* Photo Box - Only show in portrait mode */}
+      {!isLandscape && (
+        <div 
+          className="absolute top-0 right-[30px] z-[5]" 
+          style={{
+            width: '150px',
+            height: '180px',
+            border: '2px solid #1a365d',
+            backgroundColor: '#fff',
+            marginTop: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden'
+          }}
+        >
+          {data.photo ? (
+            <img
+              src={data.photo}
+              alt="Student Photo"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain'
+              }}
+            />
+          ) : (
+            <div className="text-gray-400 text-sm">Photo</div>
+          )}
+        </div>
+      )}
+
+      {/* Certificate Number - Adjust position based on orientation */}
+      <div className={`absolute top-[5px] ${isLandscape ? 'right-[30px]' : 'right-[200px]'} z-[2]`}>
         <p className="text-[white]">Certificate No: {data.certificateNo}</p>
       </div>
 
       {/* Header with Logo */}
-      <div className={`absolute ${isLandscape ? 'top-8' : 'top-9'} left-4 flex items-center`}>
+      <div className={`absolute ${isLandscape ? 'top-8' : 'top-9'} left-4 flex items-center z-[2]`}>
         <div>
           <img
             src={title}
@@ -61,7 +93,7 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
       </div>
 
       {/* Certificate Title */}
-      <div className={`absolute ${isLandscape ? 'top-[140px]' : 'top-[250px]'} left-0 right-0 text-center z-20`}>
+      <div className={`absolute ${isLandscape ? 'top-[140px]' : 'top-[250px]'} left-0 right-0 text-center z-[2]`}>
         <h1 className="text-4xl font-bold text-[#8B7355] tracking-wide">CERTIFICATE OF COMPLETION</h1>
         <p className="text-xl mt-6 text-[#8B7355]">This is to Certify that</p>
       </div>

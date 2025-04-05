@@ -11,6 +11,16 @@ import { Routes, Route, BrowserRouter } from 'react-router-dom';
 function App() {
   const [processing, setProcessing] = useState(false);
 
+  const loadImage = (url: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve();
+      img.onerror = () => reject();
+      img.crossOrigin = "anonymous"; // Enable CORS
+      img.src = url;
+    });
+  };
+
   const handleGenerateCertificates = async (data: CertificateData[]) => {
     try {
       setProcessing(true);
@@ -26,13 +36,17 @@ function App() {
         // Render certificate in selected orientation
         const root = createRoot(container);
         root.render(<CertificateTemplate data={certificate} />);
-        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Wait for render and images to load
+        await new Promise(resolve => setTimeout(resolve, 500));
+
         const element = container.firstChild as HTMLElement;
         const canvas = await html2canvas(element, {
           scale: 2,
           useCORS: true,
           logging: false
         });
+
         const blob = await new Promise<Blob>(resolve => {
           canvas.toBlob(blob => resolve(blob!), 'image/jpeg', 0.95);
         });
