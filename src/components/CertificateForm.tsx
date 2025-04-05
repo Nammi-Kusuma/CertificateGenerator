@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, Download, Plus, Trash2, Eye } from 'lucide-react';
+import { Upload, Download, Plus, Trash2, Eye, X } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import * as XLSX from 'xlsx';
 import { CertificateData } from '../types/certificate';
@@ -253,9 +253,9 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto p-4 md:p-6">
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-white p-4 md:p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-bold mb-4">Certificate Generator</h2>
           
           <div className="mb-6">
@@ -273,53 +273,30 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
             </div>
           </div>
 
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={downloadTemplate}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                disabled={processing}
-              >
-                <Download className="h-5 w-5 mr-2" />
-                Download Template
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowIndividualForm(true)}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                disabled={processing}
-              >
-                <Plus className="h-5 w-5 mr-2" />
-                Add Individual
-              </button>
-            </div>
-
-            {certificates.length > 0 && (
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => navigate(type === 'offline' ? '/preview/portrait' : '/preview/landscape')}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                  disabled={processing}
-                >
-                  <Eye className="h-5 w-5 mr-2" />
-                  Preview Certificate
-                </button>
-                <button
-                  type="submit"
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  disabled={processing}
-                >
-                  {processing ? 'Generating...' : 'Generate Certificates'}
-                </button>
-              </div>
-            )}
+          <div className="flex flex-col md:flex-row gap-2 mb-6">
+            <button
+              type="button"
+              onClick={downloadTemplate}
+              className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full md:w-auto"
+              disabled={processing}
+            >
+              <Download className="h-5 w-5 mr-2" />
+              Download Template
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowIndividualForm(true)}
+              className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-full md:w-auto"
+              disabled={processing}
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Add Individual
+            </button>
           </div>
 
           <div 
             {...getRootProps()} 
-            className={`border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 ${
+            className={`border-2 border-dashed border-gray-300 rounded-lg p-4 md:p-6 text-center cursor-pointer hover:border-blue-500 ${
               processing ? 'opacity-50 cursor-not-allowed' : ''
             }`}
           >
@@ -330,215 +307,49 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
             </p>
           </div>
 
-          {showIndividualForm && (
-            <div className="mt-6 p-4 border rounded-lg bg-gray-50">
-              <h4 className="text-lg font-medium mb-4">Individual Certificate Details</h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700">Photo URL (Google Photos)</label>
-                  <div className="mt-1 space-y-2">
-                    <input
-                      type="url"
-                      placeholder="Enter Google Photos link"
-                      value={individualCertificate.photo || ''}
-                      onChange={handleImageLinkChange}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                    {individualCertificate.photo && (
-                      <div className="w-32 h-40 border-2 border-gray-300">
-                        <img
-                          src={individualCertificate.photo}
-                          alt="Preview"
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.src = '';
-                            e.currentTarget.alt = 'Invalid image URL';
-                          }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Name</label>
-                  <input
-                    type="text"
-                    value={individualCertificate.name}
-                    onChange={(e) => setIndividualCertificate({...individualCertificate, name: e.target.value})}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Certificate No</label>
-                  <input
-                    type="text"
-                    value={individualCertificate.certificateNo}
-                    onChange={(e) => setIndividualCertificate({...individualCertificate, certificateNo: e.target.value})}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Aadhar No</label>
-                  <input
-                    type="text"
-                    value={individualCertificate.aadharNo}
-                    onChange={(e) => setIndividualCertificate({...individualCertificate, aadharNo: e.target.value})}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Sex</label>
-                  <select
-                    value={individualCertificate.sex}
-                    onChange={(e) => setIndividualCertificate({...individualCertificate, sex: e.target.value})}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  >
-                    <option value="">Select</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
-                  <input
-                    type="date"
-                    value={individualCertificate.dob}
-                    onChange={(e) => setIndividualCertificate({...individualCertificate, dob: e.target.value})}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700">Address</label>
-                  <textarea
-                    value={individualCertificate.address}
-                    onChange={(e) => setIndividualCertificate({...individualCertificate, address: e.target.value})}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    rows={2}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Ground Classes</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-xs text-gray-500">From</label>
-                      <input
-                        type="date"
-                        value={individualCertificate.groundClassesFrom}
-                        onChange={(e) => setIndividualCertificate({...individualCertificate, groundClassesFrom: e.target.value})}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-gray-500">To</label>
-                      <input
-                        type="date"
-                        value={individualCertificate.groundClassesTo}
-                        onChange={(e) => setIndividualCertificate({...individualCertificate, groundClassesTo: e.target.value})}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Simulation Classes</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-xs text-gray-500">From</label>
-                      <input
-                        type="date"
-                        value={individualCertificate.simulationClassesFrom}
-                        onChange={(e) => setIndividualCertificate({...individualCertificate, simulationClassesFrom: e.target.value})}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-gray-500">To</label>
-                      <input
-                        type="date"
-                        value={individualCertificate.simulationClassesTo}
-                        onChange={(e) => setIndividualCertificate({...individualCertificate, simulationClassesTo: e.target.value})}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Flying Training</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-xs text-gray-500">From</label>
-                      <input
-                        type="date"
-                        value={individualCertificate.flyingTrainingFrom}
-                        onChange={(e) => setIndividualCertificate({...individualCertificate, flyingTrainingFrom: e.target.value})}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-gray-500">To</label>
-                      <input
-                        type="date"
-                        value={individualCertificate.flyingTrainingTo}
-                        onChange={(e) => setIndividualCertificate({...individualCertificate, flyingTrainingTo: e.target.value})}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Date of Issue</label>
-                  <input
-                    type="date"
-                    value={individualCertificate.dateOfIssue}
-                    onChange={(e) => setIndividualCertificate({...individualCertificate, dateOfIssue: e.target.value})}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-              <div className="mt-4 flex justify-end space-x-2">
-                <button
-                  type="button"
-                  onClick={() => setShowIndividualForm(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleIndividualSubmit}
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
-                >
-                  Add Certificate
-                </button>
-              </div>
-            </div>
-          )}
-
           {certificates.length > 0 && (
             <div className="mt-6">
-              <h3 className="text-lg font-medium mb-2">Certificates List</h3>
-              <div className="max-h-60 overflow-y-auto">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
+                <h3 className="text-lg font-semibold">Certificates ({certificates.length})</h3>
+                <div className="flex gap-2 w-full md:w-auto">
+                  <button
+                    type="button"
+                    onClick={() => navigate('/certificate', { state: { data: certificates[0] } })}
+                    className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-full md:w-auto"
+                    disabled={processing}
+                  >
+                    <Eye className="h-5 w-5 mr-2" />
+                    Preview Certificate
+                  </button>
+                  <button
+                    type="submit"
+                    className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full md:w-auto"
+                    disabled={processing}
+                  >
+                    {processing ? 'Generating...' : 'Generate Certificates'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certificate No</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Issue</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certificate No</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {certificates.map((cert, index) => (
                       <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap">{cert.name}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">{cert.certificateNo}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">{cert.dateOfIssue}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 py-3 whitespace-nowrap text-sm">{cert.name}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm">{cert.certificateNo}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm">
                           <button
                             type="button"
                             onClick={() => removeCertificate(index)}
-                            className="text-red-600 hover:text-red-900"
+                            className="text-red-600 hover:text-red-800"
                           >
                             <Trash2 className="h-5 w-5" />
                           </button>
@@ -551,6 +362,193 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ onSubmit, proc
             </div>
           )}
         </div>
+
+        {showIndividualForm && (
+          <div className="mt-6 p-4 md:p-6 border rounded-lg bg-gray-50">
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="text-lg font-medium">Individual Certificate Details</h4>
+              <button
+                type="button"
+                onClick={() => setShowIndividualForm(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="col-span-full">
+                <label className="block text-sm font-medium text-gray-700">Photo URL (Google Photos)</label>
+                <div className="mt-1 space-y-2">
+                  <input
+                    type="url"
+                    placeholder="Enter Google Photos link"
+                    value={individualCertificate.photo || ''}
+                    onChange={handleImageLinkChange}
+                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                  {individualCertificate.photo && (
+                    <div className="w-32 h-40 border-2 border-gray-300">
+                      <img
+                        src={individualCertificate.photo}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = '';
+                          e.currentTarget.alt = 'Invalid image URL';
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Name</label>
+                <input
+                  type="text"
+                  value={individualCertificate.name}
+                  onChange={(e) => setIndividualCertificate({...individualCertificate, name: e.target.value})}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Certificate No</label>
+                <input
+                  type="text"
+                  value={individualCertificate.certificateNo}
+                  onChange={(e) => setIndividualCertificate({...individualCertificate, certificateNo: e.target.value})}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Aadhar No</label>
+                <input
+                  type="text"
+                  value={individualCertificate.aadharNo}
+                  onChange={(e) => setIndividualCertificate({...individualCertificate, aadharNo: e.target.value})}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Sex</label>
+                <select
+                  value={individualCertificate.sex}
+                  onChange={(e) => setIndividualCertificate({...individualCertificate, sex: e.target.value})}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                >
+                  <option value="">Select</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                <input
+                  type="date"
+                  value={individualCertificate.dob}
+                  onChange={(e) => setIndividualCertificate({...individualCertificate, dob: e.target.value})}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-700">Address</label>
+                <textarea
+                  value={individualCertificate.address}
+                  onChange={(e) => setIndividualCertificate({...individualCertificate, address: e.target.value})}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  rows={2}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Ground Classes</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-xs text-gray-500">From</label>
+                    <input
+                      type="date"
+                      value={individualCertificate.groundClassesFrom}
+                      onChange={(e) => setIndividualCertificate({...individualCertificate, groundClassesFrom: e.target.value})}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500">To</label>
+                    <input
+                      type="date"
+                      value={individualCertificate.groundClassesTo}
+                      onChange={(e) => setIndividualCertificate({...individualCertificate, groundClassesTo: e.target.value})}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Simulation Classes</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-xs text-gray-500">From</label>
+                    <input
+                      type="date"
+                      value={individualCertificate.simulationClassesFrom}
+                      onChange={(e) => setIndividualCertificate({...individualCertificate, simulationClassesFrom: e.target.value})}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500">To</label>
+                    <input
+                      type="date"
+                      value={individualCertificate.simulationClassesTo}
+                      onChange={(e) => setIndividualCertificate({...individualCertificate, simulationClassesTo: e.target.value})}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Flying Training</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-xs text-gray-500">From</label>
+                    <input
+                      type="date"
+                      value={individualCertificate.flyingTrainingFrom}
+                      onChange={(e) => setIndividualCertificate({...individualCertificate, flyingTrainingFrom: e.target.value})}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500">To</label>
+                    <input
+                      type="date"
+                      value={individualCertificate.flyingTrainingTo}
+                      onChange={(e) => setIndividualCertificate({...individualCertificate, flyingTrainingTo: e.target.value})}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Date of Issue</label>
+                <input
+                  type="date"
+                  value={individualCertificate.dateOfIssue}
+                  onChange={(e) => setIndividualCertificate({...individualCertificate, dateOfIssue: e.target.value})}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+            <div className="mt-4 flex justify-end">
+              <button
+                type="button"
+                onClick={handleIndividualSubmit}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Add Certificate
+              </button>
+            </div>
+          </div>
+        )}
       </form>
     </div>
   );

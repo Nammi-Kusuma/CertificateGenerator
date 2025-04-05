@@ -44,38 +44,40 @@ export const CertificateTemplate: React.FC<CertificateTemplateProps> = ({ data }
         }}
       />
 
-      {/* Photo Box */}
-      <div 
-        className="absolute top-0 right-[30px] z-[5]" 
-        style={{
-          width: '150px',
-          height: '180px',
-          border: '2px solid #1a365d',
-          backgroundColor: '#fff',
-          marginTop: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          overflow: 'hidden'
-        }}
-      >
-        {data.photo ? (
-          <img
-            src={data.photo}
-            alt="Student Photo"
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain'
-            }}
-          />
-        ) : (
-          <div className="text-gray-400 text-sm">Photo</div>
-        )}
-      </div>
+      {/* Photo Box - Only show in portrait mode */}
+      {!isLandscape && (
+        <div 
+          className="absolute top-0 right-[30px] z-[5]" 
+          style={{
+            width: '150px',
+            height: '180px',
+            border: '2px solid #1a365d',
+            backgroundColor: '#fff',
+            marginTop: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden'
+          }}
+        >
+          {data.photo ? (
+            <img
+              src={data.photo}
+              alt="Student Photo"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain'
+              }}
+            />
+          ) : (
+            <div className="text-gray-400 text-sm">Photo</div>
+          )}
+        </div>
+      )}
 
-      {/* Certificate Number */}
-      <div className="absolute top-[5px] right-[200px] z-[2]">
+      {/* Certificate Number - Adjust position based on orientation */}
+      <div className={`absolute top-[5px] ${isLandscape ? 'right-[30px]' : 'right-[200px]'} z-[2]`}>
         <p className="text-[white]">Certificate No: {data.certificateNo}</p>
       </div>
 
